@@ -67,7 +67,17 @@
 | A-39c | R-39c | Every implemented requirement has a linked playable scenario and documented expected outcome including failure/boundary modes; reset/replay gives deterministic results, and copied repro includes safe inputs/configuration. |
 | A-39d | R-39d | Verify keyboard-only and screen-reader workflows, small viewport layout, local-only query/data handling, bounded input and visible timing/errors; intentionally unsafe content remains inert. |
 
-**Extension tests (not MVP):** A-34 R-07 build-time incremental update, A-35 R-17 proximity/advanced syntax, A-36 R-22 grouping/collapse, A-37 R-29 offline-after-install, A-38 R-38 opt-in telemetry. These must receive separately approved expected results.
+## Extension acceptance scenarios (deferred until approved)
+
+| Test ID | Verifies | Independently observable scenario / oracle |
+| --- | --- | --- |
+| A-34 | R-07 | Rebuild an edited dataset incrementally and compare observable results against a full rebuild; no visitor-side write path is introduced. |
+| A-35 | R-17 | Configured proximity/slop and advanced boolean rules match independently authored query fixtures, with invalid syntax rejected predictably. |
+| A-36 | R-22 | Collapse section hits by parent document without duplicate group counts, and paginate deterministic group results. |
+| A-37 | R-29 | After a completed local install, disconnect the network and verify approved search operations while detecting absent/stale assets explicitly. |
+| A-38 | R-38 | Opt-in local telemetry hook reports allowed events, and the default configuration emits no network analytics or raw query records. |
+
+These are proposed acceptance statements, not implementation promises until the requester approves the extension.
 
 ## Boundary and abuse cases
 
