@@ -5,7 +5,7 @@
 ## Verification policy
 
 1. Write expected inputs/outcomes from product intent before implementing the Orama candidate.
-2. Create fresh authored fixtures with clear licensing and known relevance judgments. Do not transcribe existing Searchable test assertions, private corpus data, snapshot digests, or implementation-specific scoring constants.
+2. Create fresh authored fixtures with clear licensing and known relevance judgments. Do not transcribe another implementation's test assertions, private corpus data, snapshot digests, or implementation-specific scoring constants.
 3. Run the same contract cases against a public high-level interface. Keep adapter-specific tests distinct from product tests.
 4. Identify preconditions, inputs, observable outputs, negative cases, corner cases, locale and failure cases. A passing suite supports acceptance only within its stated coverage.
 5. Record measured evidence with candidate commit, dependency lock version, dataset digest, browser/device, run mode, timestamp and verifier.
@@ -18,7 +18,7 @@
 - **F-B: structured catalog.** 30 records with stable IDs, repeated categories, price boundaries, hierarchical paths, two geo points, one stored-only SKU, ties, duplicate-ID input, zero-content record and editorial pins.
 - **F-C: languages.** New content authored or legally sourced separately for en, de, sv, nl, nb, nn. For each, document an exact term, inflection, uncommon word and locale-fallback case. Include one ambiguity and one unsupported tag.
 - **F-D: publication.** Complete immutable generation A, complete generation B, corrupted manifest, missing artifact, digest mismatch, disallowed URL, wrong format version, stale descriptor and mixed-generation host simulation.
-- **F-E: ranking judgments.** Domain query logs or independently authored task queries, judged by a reviewer who is not copying baseline ordering from the original engine. Record graded relevance and ambiguity rationale.
+- **F-E: ranking judgments.** Domain query logs or independently authored task queries, judged by a reviewer who is not copying baseline ordering from any predecessor engine. Record graded relevance and ambiguity rationale.
 - **F-F: scale.** Deterministic generated content at 2k, 10k and 50k documents (sizes subject to measured release budgets). Include multilingual fields, long documents, low-selectivity facets and adversarial common queries.
 
 - **F-G: playground.** Independently authored scenarios exercising each approved requirement, editable public records, malformed samples, local failure injection, reset/replay, mobile and accessibility conditions. No production/private content.
@@ -97,7 +97,7 @@ Do not assert exact floating-point scores, index bytes, posting IDs, stemming st
 | Package impact | production bundle bytes and dependency footprint | requester-approved after spike |
 | Relevance | domain/language metrics plus per-query judgments | requester-approved after corpus review |
 
-Run Chromium, Firefox and WebKit; representative desktop and low-end mobile; fresh browser context, warm HTTP cache and warm in-memory session. Compare with Searchable's existing CMS-2k evidence only as *performance reference*, never as authorization to copy implementation behavior.
+Run Chromium, Firefox and WebKit; representative desktop and low-end mobile; fresh browser context, warm HTTP cache and warm in-memory session. Use independently measured fixtures as the acceptance baseline; historical benchmarks are neither release thresholds nor authorization to copy implementation behavior.
 
 ## Traceability / release evidence
 
