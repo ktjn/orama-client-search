@@ -144,7 +144,7 @@ The playground is a **first-class product capability**, not a marketing screensh
 | K-01 | Public index accidentally discloses hidden/private fields | Publisher field classification, public-data gate, negative extraction test (R-30) |
 | K-02 | Orama's in-memory snapshot increases first-query time and heap vs existing lazy shards | Compare candidate delivery modes against baselines and low-end browser budget (R-28, R-35) |
 | K-03 | Different BM25/tokenization gives materially different ranked outcomes | Independently judged relevance + accepted regression deltas (R-10, R-23, R-36) |
-| K-04 | Original BM25F phrases/synonyms/pins cannot be recreated directly by Orama APIs | Isolate adapters; use acceptance cases and do not promise 1:1 algorithmic parity (R-09, R-12, R-13) |
+| K-04 | Exact phrases, multiword synonyms and editorial pins may interact inconsistently | Specify and independently test precedence, filtering and matching invariants (R-09, R-12, R-13) |
 | K-05 | A partial CDN deployment mixes generations | Immutable release units, descriptor-first activation and fault injection (R-04, R-06) |
 | K-06 | Indexed query fragments leak into static-file access logs | Document threat model and avoid raw-query URL requests (R-31) |
 | K-07 | Unsupported locale or analyzer mismatch reduces recall | Independent multilingual corpus and language-boundary tests (R-23, R-24) |
@@ -157,7 +157,7 @@ Before implementation, requester approval must specify:
 - Which R-IDs are adopted in the first release, and any agreed exceptions/deferred capabilities.
 - Corpus sizes, supported browser/device matrix and performance budgets, using measured data.
 - Relevance thresholds and reviewed query sets for required locales.
-- Whether the new engine must preserve Searchable 2.x API and/or manifest v2 compatibility (default: neither).
+- Approve the independent public client API and dataset format, including migration and rollback guarantees for subsequent versions.
 - Feature-level verification baseline revision and explicit acceptance owner.
 - Playground coverage expectations, sample-corpus safety policy, local editing scope, and feature-by-feature scenario matrix (R-39–R-39d).
 
