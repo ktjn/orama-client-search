@@ -65,9 +65,11 @@ Each R-ID is a proposed requirement with matching verification cases in [ACCEPTA
 | R-08 | MVP | Search across selected text fields with normalized case and accent behavior defined per language; return only documents that match the chosen query semantics. |
 | R-09 | MVP | Support configurable AND and OR combination of analyzed terms, quoted ordered phrases and explicit prefix matching; handle invalid/empty input predictably. |
 | R-10 | MVP | Rank organic matches by topical relevance; field boosts, term/document importance and deterministic tie-breaks must have documented observable precedence. No fixed BM25F score or algorithm is mandated. |
+| R-10a | MVP | Support configurable **field, term and document boosts** with explicit build-time defaults and query-time overrides; validate numeric bounds and define precedence among boosts, relevance, pins and result sorting. |
 | R-11 | MVP | Offer opt-in, bounded typo tolerance. Exact matches must not be unpredictably displaced by approximate matches. |
 | R-12 | MVP | Offer authored equivalent, directional and multiword synonyms with language scoping, cycle/expansion limits and predictable precedence. |
 | R-13 | MVP | Support editorial promotion/pinning including deterministic conflicts, deduplication and explicit interaction with filters and organic ranking. |
+| R-13a | MVP | Support query-scoped **editorial pins** in exact and contains modes, explicit priorities, optional exclusive mode, deterministic conflicts and deduplication; apply all active filters before returning any pinned document. |
 | R-14 | MVP | Return stable total counts, bounded result pages, relevance ordering and declared metadata. Support offset/page-size and sort by approved scalar fields. |
 | R-15 | MVP | Produce display-safe excerpts and match span metadata for literal terms; callers own HTML escaping and rendering. Never emit trusted executable markup. |
 | R-16 | MVP | Return bounded spelling suggestions for no-result or approximate queries, and prefix-based autocomplete candidates where there is supporting corpus evidence. |
@@ -79,6 +81,7 @@ Each R-ID is a proposed requirement with matching verification cases in [ACCEPTA
 | --- | --- | --- |
 | R-18 | MVP | Support term/exact-value filtering (OR within one field, AND across fields); reject or clearly report unknown filters rather than silently broadening results. |
 | R-19 | MVP | Support inclusive numeric range filtering, hierarchical taxonomies, and geo-radius filtering when declared in the dataset. |
+| R-19a | MVP | Support **geospatial search** using valid WGS84 latitude/longitude, radius-based inclusion and distance sorting with an explicit unit; provide distance on returned hits when unambiguous, deterministic ties and rejection of invalid coordinates/radii. |
 | R-20 | MVP | Return contextual facet counts: each facet's counts reflect the query and all other active filters, excluding that facet's own active selection. |
 | R-21 | MVP | Preserve navigable, validated public URLs and optional section anchors, with enough metadata to group section hits by parent document. |
 | R-22 | E | Support group-by/collapse across matched sections and distinct-result grouping if consumers require it. |
@@ -88,6 +91,8 @@ Each R-ID is a proposed requirement with matching verification cases in [ACCEPTA
 | ID | Priority | Required behavior |
 | --- | --- | --- |
 | R-23 | MVP | Support at least English, German, Swedish, Dutch, Norwegian Bokmål and Nynorsk; permit explicit language selection and deterministic fallback for unsupported/unknown locales. |
+| R-23a | MVP | Support **language-specific stemming** for each required language with documented profiles, configurable enable/disable, and identical indexing/query analysis for each profile. Do not silently substitute one language profile for another. |
+| R-23b | MVP | Support **language-specific stopword filtering** with enable/disable, configurable language-default lists and custom additions/removals. Persist the effective analyzer policy with the dataset; consistent indexing/query behavior is mandatory, including all-stopword queries. |
 | R-24 | MVP | Keep index-time and query-time analysis compatible for every supported language. Search must not silently mix incompatible language partitions. |
 | R-25 | MVP | Provide an explicit ready/failed/disposed lifecycle and typed failures for download, decode, incompatible version, invalid config and query cancellation. |
 | R-26 | MVP | Concurrent queries against one client produce isolated, deterministic results and do not corrupt shared state. |
@@ -125,11 +130,11 @@ The playground is a **first-class product capability**, not a marketing screensh
 
 **SearchDocument:** external ID, canonical URL, locale, title, searchable field map, stored field map, optional facets, numeric fields, geo point, parent/section relationship, ordinal, editorial metadata. All document content supplied to a public search dataset is public.
 
-**DatasetDescriptor:** product data-format version, build identity, data location(s), languages, field capabilities, locale analysis policy, optional artifact integrity/digests, and compatibility information.
+**DatasetDescriptor:** product data-format version, build identity, data location(s), languages, field capabilities, per-locale analyzer policy (stemming and stopword configuration), optional artifact integrity/digests, and compatibility information.
 
 **SearchRequest:** query string, locale, required/optional query clauses, filters, facet requests, expansion options, sort, offset and limit, cancellation handle.
 
-**SearchResponse:** ordered hits with external IDs/URLs/score *or comparable ranking signal*, count, applied language, contextual facets, optional suggestions, highlight spans and coherent dataset generation identity.
+**SearchResponse:** ordered hits with external IDs/URLs/score *or comparable ranking signal*, count, applied language, contextual facets, optional distance in declared units, suggestions, highlight spans and coherent dataset generation identity.
 
 **SearchFailure:** typed category, recoverability, affected operation and safe message. An error is not a zero-result search.
 
