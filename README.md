@@ -8,8 +8,8 @@ Specification-first implementation of a **static, browser-local lexical search e
 
 | Artifact | Purpose |
 | --- | --- |
-| [spec/SYSTEM.md](spec/SYSTEM.md) | Standalone product scope, invariants, 11 capabilities, 43 requirements (including playground subrequirements), risks and boundaries |
-| [spec/system.yaml](spec/system.yaml) | Machine-readable model aligned with [System Specification](https://github.com/ktjn/system-specification), requirements `R-01`–`R-39d` |
+| [spec/SYSTEM.md](spec/SYSTEM.md) | Standalone product scope, invariants, 11 capabilities, 48 requirements (including analyzer, geo, pin, boost and playground refinements), risks and boundaries |
+| [spec/system.yaml](spec/system.yaml) | Machine-readable model aligned with [System Specification](https://github.com/ktjn/system-specification), requirements `R-01`–`R-39d`, including 5 explicit feature refinements |
 | [spec/ACCEPTANCE.md](spec/ACCEPTANCE.md) | Independent requirement-linked verification scenarios; not a passing test report |
 | [spec/PLAYGROUND.md](spec/PLAYGROUND.md) | Required interactive playground for **all approved features** and negative/boundary behavior |
 | [spec/APPROVAL.md](spec/APPROVAL.md) | Decision log, remaining approvals, quality budgets and gate definitions |
@@ -18,7 +18,7 @@ Specification-first implementation of a **static, browser-local lexical search e
 
 ## Core constraints
 
-- Search requests are evaluated locally in the browser. Static artifacts are public; there is no query-time API or required search server.
+- Search requests are evaluated locally in the browser with configurable per-language stemming/stopwords, geospatial search, pinning and boosts. Static artifacts are public; there is no query-time API or required search server.
 - The public dataset contains no secrets, personal content or permission-protected information.
 - No default query telemetry or remote embedding/vector service.
 - The browser client is headless/framework neutral. The playground is a static React/TypeScript consumer of its public API.
