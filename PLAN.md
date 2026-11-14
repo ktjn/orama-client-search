@@ -5,10 +5,10 @@
 
 ## 1. Independent implementation rules
 
-- Implement in **this repository's own source tree**, distinct from any predecessor implementation, after requester approval of the specification and verification baseline. Do not port/copy the current any previous search engine Python or TypeScript code, tests, generated shards or algorithms.
+- Implement in **this repository's own source tree**, distinct from any predecessor implementation, after requester approval of the specification and verification baseline. Do not port/copy the predecessor Python or TypeScript source, tests, generated shards or algorithms.
 - The implementer receives only the approved product spec, independently authored fixtures, public Orama documentation, public web standards and the project's own new code.
-- Black-box comparisons to the original product may inform **gap review only**; do not blindly promote differences to requirements or clone exact scores/artifact bytes.
-- Keep original Searchable implementation-model evidence and implementation candidate evidence completely separate. Never mark a candidate requirement `verified` without candidate-specific verification.
+- Black-box comparisons to a predecessor product may inform **gap review only**; do not blindly promote differences to requirements or clone exact scores/artifact bytes.
+- Keep predecessor implementation evidence and this candidate's evidence completely separate. Never mark a candidate requirement `verified` without candidate-specific verification.
 - A formal legal clean room would require two isolated teams; specification extraction involved examining predecessor sources. Describe this effort accurately as **independent, contract-driven reimplementation**, not guaranteed legal isolation.
 - Orama is an Apache-2.0 third-party dependency; pin versions, retain notices, check transitive licenses, SBOM and vulnerability alerts.
 
@@ -78,7 +78,7 @@ Evaluate two independently implementable modes:
 | A — Prebuilt Orama snapshot | Build Orama index, serialize in Node, publish versioned snapshot | Fetch descriptor and snapshot, restore Orama instance | No browser reindex; higher initial transfer/deserialize and heap possible |
 | B — Public structured document feed | Normalize source records and publish compact public JSON | Fetch documents and construct Orama index in browser | Simpler artifact and compatibility; indexing CPU/long tasks on every fresh load |
 
-**Default hypothesis:** A for ~2,000 documents, pending measurements. B remains a valid fallback if snapshot stability, size or browser restore is worse. The existing lazy-by-term Searchable sharding is not presumed necessary or desirable. Segmenting Orama indexes by locale or collection is an **optimization experiment** only if full-dataset measurements fail; do not split result sets before defining cross-segment ranking, facets, pagination and deterministic merge behavior.
+**Default hypothesis:** A for ~2,000 documents, pending measurements. B remains a valid fallback if snapshot stability, size or browser restore is worse. Do not assume lazy per-term HTTP sharding is required. Segmenting Orama indexes by locale or collection is an **optimization experiment** only if full-dataset measurements fail; do not split result sets before defining cross-segment ranking, facets, pagination and deterministic merge behavior.
 
 **Publish protocol:** hash/version every immutable artifact, publish complete generation to a new path, verify it, then atomically switch a short-cached descriptor. A browser query pins one generation. Older compatible assets remain available during rollback windows.
 
@@ -153,7 +153,7 @@ Hide Orama-specific methods/types behind the adapter. The publisher exports plai
 
 **Phase 6 — release decision.**
 - Present requirement-linked evidence, unresolved gaps/risks, and a migration/rollback plan.
-- Choose whether this is a **new product/package**, a parallel implementation, or an approved replacement of old APIs. Do not overwrite the existing library based only on passing demo tests.
+- Release as an independent package. Any subsequent compatibility adapter or migration from another package requires a separate approved feature. Do not treat a passing demo as release evidence.
 
 ## 6. Baselines, benchmarks and budget decisions
 
@@ -168,7 +168,7 @@ Benchmark total artifact bytes, initial transfer, number of requests, browser pa
 - In-memory loading removes the original term-shard transfer advantage. Benchmark before deciding whether to partition.
 - Phrase, synonym and pin requirements may need substantial adaptation; avoid implementing a second full query engine on top of Orama.
 - Relevance cannot be asserted from BM25 naming alone; compare independent judged results.
-- A strict "clean room" cannot be claimed where the same author already inspected legacy source.
+- Do not claim strict two-team legal clean-room isolation; extraction involved reviewing predecessor source, while implementation must remain independent and contract-driven.
 - Clarify whether 2.x public API or manifest v2 consumers exist before any replacement; compatibility has nontrivial cost.
 
 ## 8. Source references (implementation research only)
