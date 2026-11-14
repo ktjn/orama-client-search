@@ -84,21 +84,21 @@ Evaluate two independently implementable modes:
 
 ### Language design
 
-Create one independent Orama index per required language if this is the simplest reliable way to align analysis and avoid mixed-language query mistakes. Orama's `@orama/stemmers` includes English, German, Swedish, Dutch and a generic Norwegian stemmer. Confirm distinct **nb**/**nn** partition semantics and locale-to-tokenizer mapping in the adapter; do not claim distinct Norwegian stemming algorithms. Unsupported BCP 47 variants need a reviewed fallback policy.
+Create one independent Orama index per required language if this is the simplest reliable way to align analysis and avoid mixed-language query mistakes. Orama's `@orama/stemmers` includes English, German, Swedish, Dutch and a generic Norwegian stemmer. Its `@orama/stopwords` package supplies language-specific default lists. Confirm distinct **nb**/**nn** partitions and shared Norwegian algorithm semantics; implement configurable stopword defaults and overrides, explicit stemmer enable/disable and an analyzer configuration persisted in the dataset. Rebuild/reload the index when analyzer settings change; index/query analyzers must agree. Unsupported BCP 47 variants need a reviewed fallback policy.
 
 ### Query/feature adapters and feasibility gates
 
 | Product obligation | Likely Orama primitive | Work requiring a spike or adapter |
 | --- | --- | --- |
-| Lexical search, relevance, field boosts | `search(term, boost/properties)` | Behavioral ranking/relevance judgments; stable ties |
+| Lexical search, field/term/document boosts | `search(term, boost/properties)` | Independent boost precedence and bounded numeric validation (R-10a), stable ties and relevance judgments; adapters for missing boost layers |
 | Fuzzy tolerance | `search(tolerance)` | Literal/approximate precedence, caps, correction suggestions |
 | Terms filtering and facets | `where`, `facets` | Contextual counts excluding active same-field filter; unknown-field strictness |
 | Range, scalar sort and pagination | Typed schema, `where`, `sortBy`, `offset`, `limit` | Preserve exact inclusive boundary and stable paging rules |
-| Geo search | Orama geo support | Radius/distance ordering, coordinate validation |
-| Multilingual search | Per-index tokenizer/stemmer | nb/nn, fallback locale, mixed-language transitions |
+| Geo search | Orama geo support | WGS84 radius/boundary predicates, distance units and sorting, invalid coordinates and pinned-hit filtering (R-19a) |
+| Multilingual search | Per-index tokenizer/stemmer plus `@orama/stemmers` and `@orama/stopwords` | Per-locale on/off switches, custom stopword overrides, all-stopword query semantics, nb/nn, fallback locale and mixed-language transitions (R-23a/b) |
 | Quoted phrases and explicit prefix | Search input and tokenizer | **Do not assume** exact positional semantics; test capability before committing MVP |
 | Authored synonyms | Explicit query variants or controlled augmentation | Directionality, multiword semantics, caps, dedupe and relevance |
-| Editorial pins | Orama pinning if suitable or separate ordering adapter | Exact/contains/exclusive behavior; all filters still apply |
+| Editorial pins | Orama pinning if suitable or separate ordering adapter | Exact/contains, priority, exclusive, duplicate conflicts and filtering including geo (R-13a) |
 | Highlight and snippets | Plain text from stored fields; optional Orama highlight plugin | Safe spans, Unicode offset consistency, no injected HTML |
 | Autocomplete/did-you-mean | Corpus terms or separate build-time vocabulary | Bounded prefix completions and typo candidates without unnecessary data download |
 | Cancellation and concurrency | Promise wrapper around loading; sync Orama query | Native synchronous search cannot be interrupted mid-computation; gate on bounded work, stale-result suppression and main-thread latency |
@@ -130,7 +130,7 @@ Hide Orama-specific methods/types behind the adapter. The publisher exports plai
 
 **Phase 1 — constrained Orama feasibility spike (after approval).**
 - Pin library; test raw documents vs prebuilt save/load on independent 2k/10k/50k datasets.
-- Test phrase/prefix semantics, contextual facets, synonyms, promotions, nb/nn, errors and low-end browser cost.
+- Test phrase/prefix semantics, contextual facets, synonyms, boost-layer precedence, pin modes, geo radius/distance, stemming/stopword controls, nb/nn, errors and low-end browser cost.
 - Produce a trade-off decision with measured bytes/time/heap, unsupported cases, and proposed scope changes. Reopen approval for any behavior changes.
 
 **Phase 2 — publisher and transport.**
@@ -142,7 +142,7 @@ Hide Orama-specific methods/types behind the adapter. The publisher exports plai
 - Verify isolated units against fakes and run black-box acceptance cases against built artifacts.
 
 **Phase 4 — complete feature playground (required).**
-- Implement a static React/TypeScript playground on the same public headless API. Support editable safe sample documents, index rebuild/reload, feature scenario picker, controls for each adopted search option, raw result/diagnostics views, deterministic reset and failure demonstrations.
+- Implement a static React/TypeScript playground on the same public headless API. Support editable safe sample documents, rebuild/reload when analyzer policy changes, explicit stemming and stopword configuration, WGS84 geo queries, pin modes, field/term/document boost controls, feature scenario picker, raw result/diagnostics views, deterministic reset and failure demonstrations.
 - Maintain a requirement-to-playground scenario matrix (R-01..R-39d) and demonstrate successful, zero-results, error and boundary behavior. Distinguish interactive exploration from automated test evidence.
 - Independently verify A-39 through A-39d including keyboard/screen-reader, small-screen, hostile input, network privacy and output escaping.
 
