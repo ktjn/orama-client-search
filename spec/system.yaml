@@ -33,7 +33,7 @@ capabilities:
       operation: "ingest-content"
       mode: "sync"
       request:
-        - "source-records"
+        - "search-document"
       response: "search-document"
       idempotent: true
       auth: "none-in-process"
