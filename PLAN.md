@@ -124,7 +124,7 @@ Hide Orama-specific methods/types behind the adapter. The publisher exports plai
 ## 5. Implementation phases and exit criteria
 
 **Phase 0 — specification approval (required before implementation).**
-- Review [spec/SYSTEM.md](spec/SYSTEM.md), [spec/ACCEPTANCE.md](spec/ACCEPTANCE.md), and the deviations in [spec/SYSTEM.md](spec/SYSTEM.md).
+- Review [spec/SYSTEM.md](spec/SYSTEM.md), [spec/ACCEPTANCE.md](spec/ACCEPTANCE.md), [spec/PLAYGROUND.md](spec/PLAYGROUND.md), [spec/system.yaml](spec/system.yaml), and [spec/APPROVAL.md](spec/APPROVAL.md).
 - Agree MVP feature IDs, test expectations, locales, compatibility stance, security posture, budgets and approval record.
 - No code is changed in this PR.
 
@@ -147,7 +147,7 @@ Hide Orama-specific methods/types behind the adapter. The publisher exports plai
 - Independently verify A-39 through A-39d including keyboard/screen-reader, small-screen, hostile input, network privacy and output escaping.
 
 **Phase 5 — product integration and independent assurance.**
-- Build minimal accessible HTML/React demo (React is optional) exercising keyboard flow and error/empty cases.
+- Validate real integration paths through the headless package and the completed playground; avoid building a redundant second demo.
 - Run all supported browser/device performance matrix, independent relevance judgments, security tests, packaging/license audit.
 - Fix defects without changing approved requirements. Route specification gaps back through approval.
 
