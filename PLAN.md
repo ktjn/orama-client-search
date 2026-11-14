@@ -165,11 +165,11 @@ Benchmark total artifact bytes, initial transfer, number of requests, browser pa
 
 - Orama save/load serialization can be sensitive to version changes; pin version and independent product dataset revision, and test old/new release combinations.
 - Orama data persistence plugins may increase browser bundle size or require Node polyfills. Prefer core save/load if viable.
-- In-memory loading removes the original term-shard transfer advantage. Benchmark before deciding whether to partition.
+- In-memory loading can trade reduced query-time fetch complexity for increased initial transfer and memory. Benchmark before deciding whether to partition.
 - Phrase, synonym and pin requirements may need substantial adaptation; avoid implementing a second full query engine on top of Orama.
 - Relevance cannot be asserted from BM25 naming alone; compare independent judged results.
 - Do not claim strict two-team legal clean-room isolation; extraction involved reviewing predecessor source, while implementation must remain independent and contract-driven.
-- Clarify whether 2.x public API or manifest v2 consumers exist before any replacement; compatibility has nontrivial cost.
+- The independent API and dataset schema are the initial baseline. Any compatibility adapter for another product is separately scoped and approved.
 
 ## 8. Source references (implementation research only)
 
