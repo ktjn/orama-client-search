@@ -15,8 +15,8 @@
 ## Authored datasets
 
 - **F-A: documents.** 12 newly authored static pages with varied title/body scores, exact vocabulary, duplicate words, canonical URLs, one ignored page, one explicit body region, one excluded subtree, one section anchor and one malicious-looking field string.
-- **F-B: structured catalog.** 30 records with stable IDs, repeated categories, price boundaries, hierarchical paths, two geo points, one stored-only SKU, ties, duplicate-ID input, zero-content record and editorial pins.
-- **F-C: languages.** New content authored or legally sourced separately for en, de, sv, nl, nb, nn. For each, document an exact term, inflection, uncommon word and locale-fallback case. Include one ambiguity and one unsupported tag.
+- **F-B: structured catalog.** 30 records with stable IDs, repeated categories, price boundaries, hierarchical paths, at least three geo points including a boundary case, one stored-only SKU, ties, duplicate-ID input, zero-content record and editorial pins.
+- **F-C: languages.** New content authored or legally sourced separately for en, de, sv, nl, nb, nn. For each, document exact terms, inflection pairs, stopword candidates, custom stopword overrides, and locale-fallback cases. Include one ambiguity and one unsupported tag.
 - **F-D: publication.** Complete immutable generation A, complete generation B, corrupted manifest, missing artifact, digest mismatch, disallowed URL, wrong format version, stale descriptor and mixed-generation host simulation.
 - **F-E: ranking judgments.** Domain query logs or independently authored task queries, judged by a reviewer who is not copying baseline ordering from any predecessor engine. Record graded relevance and ambiguity rationale.
 - **F-F: scale.** Deterministic generated content at 2k, 10k and 50k documents (sizes subject to measured release budgets). Include multilingual fields, long documents, low-selectivity facets and adversarial common queries.
@@ -36,17 +36,22 @@
 | A-07 | R-08 | Case/normalization examples match intended tokens without matching unrelated documents; fields excluded from search do not contribute. |
 | A-08 | R-09 | Two-term AND and OR results differ as specified; ordered quoted phrases only match ordered contiguous terms; prefix matches expanded words; malformed/empty syntax has explicit behavior. |
 | A-09 | R-10 | When all else is equal, a title match outranks body-only match, a direct exact match outranks fuzzy expansion, and equal-ranked documents have stable deterministic order. |
+| A-10a | R-10a | Against controlled equal-content fixtures, changing field, term and document boosts independently changes the intended organic ranking; query overrides take precedence as specified, invalid/NaN/infinite/negative weights reject, and sorting/pins obey documented precedence. |
 | A-10 | R-11 | One-edit misspelling finds the approved candidate when enabled; disabled tolerance does not; expansion limits prevent candidate explosion. |
 | A-11 | R-12 | Equivalent synonym works bidirectionally, directional synonym works only one direction, multiword expansion has the specified matching constraints; cyclic graphs terminate. |
 | A-12 | R-13 | Exact/contains promotion conflict resolves by explicit priority, duplicates are collapsed, and a selected filter cannot surface a disallowed pinned hit. |
+| A-13a | R-13a | In exact/contains, priority-tie, exclusive and duplicate-pin cases, returned IDs/order are deterministic; pins excluded by facet, range, exact-value or geo filters never appear, including when exclusive mode is active. |
 | A-13 | R-14 | Results are paginated without duplicates/omissions, total is invariant across pages, scalar sort is consistent and ties are stable; invalid page bounds reject. |
 | A-14 | R-15 | Highlights are valid character-span ranges for matching visible text; escaped HTML or script-like strings remain inert when rendered by reference UI. |
 | A-15 | R-16 | No-result typo yields bounded corpus-grounded suggestion; partial term suggests known continuations; no unsupported candidate is fabricated. |
 | A-16 | R-18 | Multiple values within one terms field are OR; different fields are AND; an unknown field returns a declared error rather than silently removing that restriction. |
 | A-17 | R-19 | Numeric min/max are inclusive; parent/child taxonomy filters apply consistently; geo radius includes inside/boundary and excludes outside points. |
+| A-19a | R-19a | WGS84 test points inside/on/outside a radius are included consistently; distance sort is nearest-first in declared units with stable ties; invalid lat/lon/radius reject, and distance is supplied only when its origin is unambiguous. |
 | A-18 | R-20 | Contextual facet counts exclude current facet selection while respecting other active filters; counts update as selections change. |
 | A-19 | R-21 | Canonical public URLs and encoded section anchors navigate to the corresponding content; section identity cannot collide with parent ID. |
 | A-20 | R-23 | For each declared required language, exact and inflected queries retrieve the expected document; unsupported locale follows explicit fallback or throws. |
+| A-23a | R-23a | For each en/de/sv/nl/nb/nn profile, verify independent inflection pairs with stemming on/off; index-time and query-time transformations agree and nb/nn remain separate selected profiles despite shared algorithm possibilities. |
+| A-23b | R-23b | For each required language, enabling a default stopword list removes configured tokens consistently during build/query, disabling it preserves them, and custom add/remove takes effect after rebuild; an all-stopword query has explicit predictable non-match behavior and never becomes a match-all. |
 | A-21 | R-24 | Query analyzer and publisher agree per locale; ambiguous languages and mixed-language corpora do not silently cross partitions. |
 | A-22 | R-25 | Failed initialization, broken downloads and query after dispose each return distinct typed failures; no failure is reinterpreted as zero hits. |
 | A-23 | R-26 | Multiple overlapping wide/narrow searches on one instance equal the results of sequential calls, including facet and locale isolation. |
