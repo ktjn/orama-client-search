@@ -62,6 +62,8 @@ The table covers **the complete adopted feature surface**, not just the original
 | PG-10 | Editable dataset | Add a public record, rebuild locally, search it, reset to baseline |
 | PG-11 | Invalid data | Select malformed descriptor, invalid origin and duplicate ID; inspect errors |
 | PG-12 | Lifecycle | Cancel in-flight request, retry another, dispose and verify failure |
+| PG-18 | Stopword policy | Toggle locale default stopwords, add/remove custom stopwords, rebuild fixture and verify all-stopword query handling |
+| PG-19 | Stemmer policy | Toggle stemming per locale, rebuild fixture and compare independently authored inflections |
 | PG-13 | Performance | Compare cold/warm timing and displayed count; capture browser/env |
 | PG-14 | Publication | Switch release A/B and verify generation isolation |
 | PG-15 | Coverage | Navigate all requirement links; find missing or deferred demos without false claims |
