@@ -174,7 +174,7 @@ capabilities:
   - id: "C-08"
     version: "0.1.0"
     status: "specified"
-    description: "Language normalization is deterministic and compatible across publishing/search"
+    description: "Language-specific stemming and stopword policies are deterministic and consistent across publishing and search"
     preconditions:
       - "All supplied input is validated before processing"
     postconditions:
@@ -350,6 +350,7 @@ data_models:
       indexedFields: "field name -> public text"
       storedFields: "field name -> public display value"
       facets: "optional facet/range/geo values"
+      geoPoint: "optional WGS84 latitude and longitude"
       section: "optional parent id and anchor"
   - id: "public-dataset"
     version: "0.1.0"
@@ -364,6 +365,7 @@ data_models:
       artifactLocations: "allowlisted static paths"
       languages: "supported analysis profiles"
       fieldDefinitions: "public searchable and stored field contracts"
+      analyzers: "per-locale stemmer and effective stopword configuration including defaults and overrides"
   - id: "search-request"
     version: "0.1.0"
     owner: "browser-session"
@@ -372,7 +374,7 @@ data_models:
       text: "transient user-entered query never uploaded"
       language: "explicit or resolved language"
       filters: "typed filtering constraints"
-      options: "boosts, terms, expansions, sorting, pagination"
+      options: "field term and document boosts, geo radius/sort, pins, expansions, sorting, pagination"
       signal: "optional cancellation handle"
   - id: "search-response"
     version: "0.1.0"
@@ -541,6 +543,21 @@ requirements:
     criteria:
       - id: "A-09"
         text: "When all else is equal, a title match outranks body-only match, a direct exact match outranks fuzzy expansion, and equal-ranked documents have stable deterministic order."
+  - id: "R-10a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support configurable field, term and document boosts with explicit build-time defaults and query-time overrides; validate numeric bounds and define precedence among boosts, relevance, pins and result sorting."
+    criteria:
+      - id: "A-10a"
+        text: "Against controlled equal-content fixtures, changing field, term and document boosts independently changes the intended organic ranking; query overrides take precedence as specified, invalid/NaN/infinite/negative weights reject, and sorting/pins obey documented precedence."
+    refines:
+      - "R-10"
   - id: "R-11"
     version: "0.1.0"
     status: "specified"
@@ -580,6 +597,21 @@ requirements:
     criteria:
       - id: "A-12"
         text: "Exact/contains promotion conflict resolves by explicit priority, duplicates are collapsed, and a selected filter cannot surface a disallowed pinned hit."
+  - id: "R-13a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support query-scoped editorial pins in exact and contains modes, explicit priorities, optional exclusive mode, deterministic conflicts and deduplication; apply all active filters before returning any pinned document."
+    criteria:
+      - id: "A-13a"
+        text: "In exact/contains, priority-tie, exclusive and duplicate-pin cases, returned IDs/order are deterministic; pins excluded by facet, range, exact-value or geo filters never appear, including when exclusive mode is active."
+    refines:
+      - "R-13"
   - id: "R-14"
     version: "0.1.0"
     status: "specified"
@@ -658,6 +690,21 @@ requirements:
     criteria:
       - id: "A-17"
         text: "Numeric min/max are inclusive; parent/child taxonomy filters apply consistently; geo radius includes inside/boundary and excludes outside points."
+  - id: "R-19a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-05"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support geospatial search using valid WGS84 latitude/longitude, radius-based inclusion and distance sorting with an explicit unit; provide distance on returned hits when unambiguous, deterministic ties and rejection of invalid coordinates/radii."
+    criteria:
+      - id: "A-19a"
+        text: "WGS84 test points inside/on/outside a radius are included consistently; distance sort is nearest-first in declared units with stable ties; invalid lat/lon/radius reject, and distance is supplied only when its origin is unambiguous."
+    refines:
+      - "R-19"
   - id: "R-20"
     version: "0.1.0"
     status: "specified"
@@ -710,6 +757,36 @@ requirements:
     criteria:
       - id: "A-20"
         text: "For each declared required language, exact and inflected queries retrieve the expected document; unsupported locale follows explicit fallback or throws."
+  - id: "R-23a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support language-specific stemming for each required language with documented profiles, configurable enable/disable, and identical indexing/query analysis for each profile. Do not silently substitute one language profile for another."
+    criteria:
+      - id: "A-23a"
+        text: "For each en/de/sv/nl/nb/nn profile, verify independent inflection pairs with stemming on/off; index-time and query-time transformations agree and nb/nn remain separate selected profiles despite shared algorithm possibilities."
+    refines:
+      - "R-23"
+  - id: "R-23b"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support language-specific stopword filtering with enable/disable, configurable language-default lists and custom additions/removals. Persist the effective analyzer policy with the dataset; consistent indexing/query behavior is mandatory, including all-stopword queries."
+    criteria:
+      - id: "A-23b"
+        text: "For each required language, enabling a default stopword list removes configured tokens consistently during build/query, disabling it preserves them, and custom add/remove takes effect after rebuild; an all-stopword query has explicit predictable non-match behavior and never becomes a match-all."
+    refines:
+      - "R-23"
   - id: "R-24"
     version: "0.1.0"
     status: "specified"
@@ -1064,7 +1141,7 @@ views:
     purpose: "Configure public fixtures and run interactive searches"
     content:
       - "Corpus and field editor"
-      - "Search, language, facet, sort and ranking controls"
+      - "Search, language/stemmer/stopword, geo, pin, facet, sort and boost controls"
       - "Current dataset identity and warnings"
     actions: ["edit-record", "run-query", "inspect-output", "reset"]
     states:
@@ -1085,7 +1162,7 @@ experiences:
     description: "A user selects, exercises and inspects every approved search capability using public editable fixtures"
     critical: true
     exhaustive: true
-    requirements: ["R-39", "R-39a", "R-39b", "R-39c", "R-39d"]
+    requirements: ["R-39", "R-39a", "R-39b", "R-39c", "R-39d", "R-10a", "R-13a", "R-19a", "R-23a", "R-23b"]
     capabilities: ["C-11"]
     views: ["playground-feature-catalog", "playground-workbench", "playground-inspector"]
     constraints:
@@ -1164,6 +1241,26 @@ experiences:
         requirement: "R-39c"
         interactions: ["back-to-workbench"]
         states: ["playground-workbench.ready"]
+      - id: "PG-model-boosts"
+        requirement: "R-10a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-pins"
+        requirement: "R-13a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-geo"
+        requirement: "R-19a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-stemming"
+        requirement: "R-23a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-stopwords"
+        requirement: "R-23b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
       - id: "PG-model-replay"
         requirement: "R-39c"
         interactions: ["replay-scenario"]
