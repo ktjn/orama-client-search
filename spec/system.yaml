@@ -500,8 +500,8 @@ requirements:
     mandatory: false
     statement: "Allow incremental build-time updates without changing query-time immutability; not required for initial replacement."
     criteria:
-      - id: "AC-R-07"
-        text: "Verification must establish the observable behavior of R-07 using independent fixtures and negative/boundary cases."
+      - id: "A-34"
+        text: "Rebuild an edited dataset incrementally and compare observable results against a full rebuild; no visitor-side write path is introduced."
   - id: "R-08"
     version: "0.1.0"
     status: "specified"
@@ -630,8 +630,8 @@ requirements:
     mandatory: false
     statement: "Support cross-field proximity/slop search or advanced boolean query syntax beyond the specified simple query grammar."
     criteria:
-      - id: "AC-R-17"
-        text: "Verification must establish the observable behavior of R-17 using independent fixtures and negative/boundary cases."
+      - id: "A-35"
+        text: "Configured proximity/slop and advanced boolean rules match independently authored query fixtures, with invalid syntax rejected predictably."
   - id: "R-18"
     version: "0.1.0"
     status: "specified"
@@ -695,8 +695,8 @@ requirements:
     mandatory: false
     statement: "Support group-by/collapse across matched sections and distinct-result grouping if consumers require it."
     criteria:
-      - id: "AC-R-22"
-        text: "Verification must establish the observable behavior of R-22 using independent fixtures and negative/boundary cases."
+      - id: "A-36"
+        text: "Collapse section hits by parent document without duplicate group counts, and paginate deterministic group results."
   - id: "R-23"
     version: "0.1.0"
     status: "specified"
@@ -786,8 +786,8 @@ requirements:
     mandatory: false
     statement: "Fully offline operation after initial install and persistent on-device indexes require their own approval; ordinary cached HTTP is sufficient for MVP."
     criteria:
-      - id: "AC-R-29"
-        text: "Verification must establish the observable behavior of R-29 using independent fixtures and negative/boundary cases."
+      - id: "A-37"
+        text: "After a completed local install, disconnect the network and verify approved search operations while detecting absent/stale assets explicitly."
   - id: "R-30"
     version: "0.1.0"
     status: "specified"
@@ -903,8 +903,8 @@ requirements:
     mandatory: false
     statement: "Optional telemetry integration may expose events/hooks controlled by integrators; the library must not activate remote analytics by default."
     criteria:
-      - id: "AC-R-38"
-        text: "Verification must establish the observable behavior of R-38 using independent fixtures and negative/boundary cases."
+      - id: "A-38"
+        text: "Opt-in local telemetry hook reports allowed events, and the default configuration emits no network analytics or raw query records."
   - id: "R-39"
     version: "0.1.0"
     status: "specified"
@@ -1050,3 +1050,121 @@ risks:
       - "R-39c"
       - "R-39d"
 evidence: []
+
+views:
+  - id: "playground-feature-catalog"
+    purpose: "Discover all approved search features, examples and requirement coverage"
+    content:
+      - "Feature list with R/A/PG identifiers and implementation status"
+      - "Fixture and capability descriptions"
+    actions: ["select-feature"]
+    states:
+      ready: "Show feature catalogue and the selected requirement mapping"
+  - id: "playground-workbench"
+    purpose: "Configure public fixtures and run interactive searches"
+    content:
+      - "Corpus and field editor"
+      - "Search, language, facet, sort and ranking controls"
+      - "Current dataset identity and warnings"
+    actions: ["edit-record", "run-query", "inspect-output", "reset"]
+    states:
+      ready: "Show editable fixture and controls"
+      loading: "Show cancellable progress while rebuilding the isolated dataset"
+  - id: "playground-inspector"
+    purpose: "Inspect structured outcomes, safe highlights, errors and diagnostics"
+    content:
+      - "Rendered hits, raw results, contextual facets and timing"
+      - "Reproduction state and visible typed errors"
+    actions: ["back", "replay"]
+    states:
+      results: "Display ranked results and raw structured response"
+      empty: "Explain no matching documents and show available suggestions"
+      error: "Show typed error and recoverable action without fabricated results"
+experiences:
+  - id: "playground-feature-verification"
+    description: "A user selects, exercises and inspects every approved search capability using public editable fixtures"
+    critical: true
+    exhaustive: true
+    requirements: ["R-39", "R-39a", "R-39b", "R-39c", "R-39d"]
+    capabilities: ["C-11"]
+    views: ["playground-feature-catalog", "playground-workbench", "playground-inspector"]
+    constraints:
+      public_only: "Sample records and fixtures must contain no non-public data"
+      framework_independence: "Playground uses the public headless engine interface"
+      no_query_upload: "No raw query text or edited corpus transmitted to a query API"
+    interactions:
+      - id: "choose-feature"
+        from_view: "playground-feature-catalog"
+        to_view: "playground-workbench"
+        trigger: "select-feature"
+        outcome: "A matching fixture and configured feature controls appear"
+      - id: "edit-fixture"
+        from_view: "playground-workbench"
+        to_view: "playground-workbench"
+        trigger: "edit-record"
+        outcome: "A local isolated fixture is rebuilt or reloaded and controls remain responsive"
+      - id: "run-query"
+        from_view: "playground-workbench"
+        to_view: "playground-inspector"
+        trigger: "run-query"
+        outcome: "Completed local query produces structured results or a typed failure"
+        failure_modes:
+          invalid_input: "error"
+      - id: "inspect-output"
+        from_view: "playground-workbench"
+        to_view: "playground-inspector"
+        trigger: "inspect-output"
+        outcome: "The active scenario displays its raw and rendered outcome"
+      - id: "reset-fixture"
+        from_view: "playground-workbench"
+        to_view: "playground-workbench"
+        trigger: "reset"
+        outcome: "Fixture and controls return to repeatable initial state"
+      - id: "back-to-workbench"
+        from_view: "playground-inspector"
+        to_view: "playground-workbench"
+        trigger: "back"
+        outcome: "Previous configuration remains visible and editable"
+      - id: "replay-scenario"
+        from_view: "playground-inspector"
+        to_view: "playground-inspector"
+        trigger: "replay"
+        outcome: "The same scenario returns reproducible observable results"
+    scenarios:
+      - id: "PG-model-catalog"
+        requirement: "R-39"
+        interactions: ["choose-feature"]
+        states: ["playground-feature-catalog.ready", "playground-workbench.ready"]
+      - id: "PG-model-edit"
+        requirement: "R-39a"
+        interactions: ["edit-fixture"]
+        states: ["playground-workbench.loading", "playground-workbench.ready"]
+      - id: "PG-model-search"
+        requirement: "R-39b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-zero-results"
+        requirement: "R-39b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.empty"]
+      - id: "PG-model-error"
+        requirement: "R-39d"
+        interactions: ["run-query"]
+        states: ["playground-inspector.error"]
+        kind: "negative"
+      - id: "PG-model-inspect"
+        requirement: "R-39b"
+        interactions: ["inspect-output"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-reset"
+        requirement: "R-39c"
+        interactions: ["reset-fixture"]
+        states: ["playground-workbench.ready"]
+      - id: "PG-model-back"
+        requirement: "R-39c"
+        interactions: ["back-to-workbench"]
+        states: ["playground-workbench.ready"]
+      - id: "PG-model-replay"
+        requirement: "R-39c"
+        interactions: ["replay-scenario"]
+        states: ["playground-inspector.results"]
