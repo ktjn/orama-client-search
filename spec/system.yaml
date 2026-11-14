@@ -1,0 +1,1267 @@
+# Standalone system-specification model. Proposal only; no passing evidence exists.
+# Product behavior and detailed acceptance: spec/SYSTEM.md, spec/ACCEPTANCE.md, spec/PLAYGROUND.md.
+# Orama is a candidate implementation detail recorded only in PLAN.md.
+system:
+  id: "orama-client-search"
+  version: "0.1.0"
+  status: "specified"
+  layers:
+    - "experience"
+    - "application"
+    - "domain"
+    - "foundation"
+  external_sources: []
+  quality_attributes:
+    search_execution: "browser local only"
+    search_hosting: "static HTTP public assets"
+    playground: "all approved feature scenarios demonstrable"
+    performance_budget: "requester approval required after baseline"
+capabilities:
+  - id: "C-01"
+    version: "0.1.0"
+    status: "specified"
+    description: "Public source documents are validated and normalized"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Public source documents are validated and normalized"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-source"
+    interface:
+      operation: "ingest-content"
+      mode: "sync"
+      request:
+        - "search-document"
+      response: "search-document"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-source: "invalid-source"
+  - id: "C-02"
+    version: "0.1.0"
+    status: "specified"
+    description: "A complete immutable public dataset generation can be published"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "A complete immutable public dataset generation can be published"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-publication"
+    interface:
+      operation: "publish-dataset"
+      mode: "async"
+      request:
+        - "search-document"
+      response: "public-dataset"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-publication: "invalid-publication"
+  - id: "C-03"
+    version: "0.1.0"
+    status: "specified"
+    description: "Query options are converted into explicit searchable intent"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Query options are converted into explicit searchable intent"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-query"
+    interface:
+      operation: "interpret-query"
+      mode: "sync"
+      request:
+        - "search-request"
+      response: "search-request"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-query: "invalid-query"
+  - id: "C-04"
+    version: "0.1.0"
+    status: "specified"
+    description: "Eligible documents are scored and returned in stable relevance order"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Eligible documents are scored and returned in stable relevance order"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-query"
+    interface:
+      operation: "retrieve-and-rank"
+      mode: "sync"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-query: "invalid-query"
+  - id: "C-05"
+    version: "0.1.0"
+    status: "specified"
+    description: "Filtering and contextual facets obey declared semantics"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Filtering and contextual facets obey declared semantics"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-filter"
+    interface:
+      operation: "filter-and-facet"
+      mode: "sync"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-filter: "invalid-filter"
+  - id: "C-06"
+    version: "0.1.0"
+    status: "specified"
+    description: "Result metadata, excerpts and navigation targets are safe and stable"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Result metadata, excerpts and navigation targets are safe and stable"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-result"
+    interface:
+      operation: "present-results"
+      mode: "sync"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-result: "invalid-result"
+  - id: "C-07"
+    version: "0.1.0"
+    status: "specified"
+    description: "Bounded corpus-backed suggestions and corrections are returned"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Bounded corpus-backed suggestions and corrections are returned"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-query"
+    interface:
+      operation: "assist-discovery"
+      mode: "sync"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-query: "invalid-query"
+  - id: "C-08"
+    version: "0.1.0"
+    status: "specified"
+    description: "Language-specific stemming and stopword policies are deterministic and consistent across publishing and search"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Language normalization is deterministic and compatible across publishing/search"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "unsupported-locale"
+    interface:
+      operation: "analyze-language"
+      mode: "sync"
+      request:
+        - "search-document"
+      response: "search-document"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        unsupported-locale: "unsupported-locale"
+  - id: "C-09"
+    version: "0.1.0"
+    status: "specified"
+    description: "Search requests are isolated, cancellable and dataset-consistent"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Search requests are isolated, cancellable and dataset-consistent"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "client-unavailable"
+    interface:
+      operation: "manage-client"
+      mode: "async"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        client-unavailable: "client-unavailable"
+  - id: "C-10"
+    version: "0.1.0"
+    status: "specified"
+    description: "UI consumers can render states/results without importing engine internals"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "UI consumers can render states/results without importing engine internals"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-view-state"
+    interface:
+      operation: "integrate-ui"
+      mode: "async"
+      request:
+        - "search-request"
+      response: "search-response"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-view-state: "invalid-view-state"
+  - id: "C-11"
+    version: "0.1.0"
+    status: "specified"
+    description: "Feature scenarios can be run and inspected using public fixtures"
+    preconditions:
+      - "All supplied input is validated before processing"
+    postconditions:
+      - "Feature scenarios can be run and inspected using public fixtures"
+    invariants:
+      - "No requirement for a query-time server or query-upload endpoint"
+    failure_modes:
+      - "invalid-scenario"
+    interface:
+      operation: "exercise-playground"
+      mode: "async"
+      request:
+        - "playground-scenario"
+      response: "playground-run"
+      idempotent: true
+      auth: "none-in-process"
+      errors:
+        invalid-scenario: "invalid-scenario"
+components:
+  - id: "content-ingestion"
+    version: "0.1.0"
+    status: "specified"
+    description: "Normalize authored public HTML and structured records"
+    layer: "domain"
+    provides:
+      - "C-01"
+    owns_data:
+      - "search-document"
+  - id: "dataset-publication"
+    version: "0.1.0"
+    status: "specified"
+    description: "Produce and atomically activate immutable static datasets"
+    layer: "application"
+    provides:
+      - "C-02"
+    requires:
+      - "C-01"
+    owns_data:
+      - "public-dataset"
+  - id: "language-analysis"
+    version: "0.1.0"
+    status: "specified"
+    description: "Resolve locale-specific analysis behavior"
+    layer: "foundation"
+    provides:
+      - "C-08"
+  - id: "query-evaluation"
+    version: "0.1.0"
+    status: "specified"
+    description: "Interpret query and produce ranked, filtered, highlighted and suggested results"
+    layer: "domain"
+    provides:
+      - "C-03"
+      - "C-04"
+      - "C-05"
+      - "C-06"
+      - "C-07"
+    requires:
+      - "C-08"
+  - id: "browser-session"
+    version: "0.1.0"
+    status: "specified"
+    description: "Provide ready/query/disposal contract and generation-consistent client lifecycle"
+    layer: "application"
+    provides:
+      - "C-09"
+    requires:
+      - "C-03"
+      - "C-04"
+      - "C-05"
+      - "C-06"
+      - "C-07"
+    owns_data:
+      - "search-request"
+      - "search-response"
+  - id: "host-integration"
+    version: "0.1.0"
+    status: "specified"
+    description: "Framework-neutral UI-facing result and status contract"
+    layer: "experience"
+    provides:
+      - "C-10"
+    requires:
+      - "C-09"
+  - id: "playground"
+    version: "0.1.0"
+    status: "specified"
+    description: "Static interactive reference consumer with requirement-linked scenarios"
+    layer: "experience"
+    provides:
+      - "C-11"
+    requires:
+      - "C-09"
+      - "C-02"
+    owns_data:
+      - "playground-scenario"
+      - "playground-run"
+data_models:
+  - id: "search-document"
+    version: "0.1.0"
+    owner: "content-ingestion"
+    classification: "public"
+    fields:
+      externalId: "stable string"
+      url: "validated public HTTP(S) URL"
+      language: "language code"
+      indexedFields: "field name -> public text"
+      storedFields: "field name -> public display value"
+      facets: "optional facet/range/geo values"
+      geoPoint: "optional WGS84 latitude and longitude"
+      section: "optional parent id and anchor"
+  - id: "public-dataset"
+    version: "0.1.0"
+    owner: "dataset-publication"
+    classification: "public"
+    derived_from:
+      - "search-document"
+    fields:
+      formatVersion: "independent integer version"
+      buildIdentity: "deterministic publication identity"
+      generation: "immutable release identifier"
+      artifactLocations: "allowlisted static paths"
+      languages: "supported analysis profiles"
+      fieldDefinitions: "public searchable and stored field contracts"
+      analyzers: "per-locale stemmer and effective stopword configuration including defaults and overrides"
+  - id: "search-request"
+    version: "0.1.0"
+    owner: "browser-session"
+    classification: "confidential"
+    fields:
+      text: "transient user-entered query never uploaded"
+      language: "explicit or resolved language"
+      filters: "typed filtering constraints"
+      options: "field term and document boosts, geo radius/sort, pins, expansions, sorting, pagination"
+      signal: "optional cancellation handle"
+  - id: "search-response"
+    version: "0.1.0"
+    owner: "browser-session"
+    classification: "confidential"
+    derived_from:
+      - "search-request"
+      - "public-dataset"
+    fields:
+      hits: "ordered result references and public display fields"
+      totalHits: "non-negative integer"
+      facets: "contextual counts"
+      suggestions: "optional corpus-grounded terms"
+      datasetGeneration: "coherent release id"
+  - id: "playground-scenario"
+    version: "0.1.0"
+    owner: "playground"
+    classification: "public"
+    fields:
+      scenarioId: "stable public identifier"
+      requirements: "associated R IDs"
+      fixture: "public sample records"
+      controls: "query and dataset configuration"
+      expected: "observable assertions and examples"
+  - id: "playground-run"
+    version: "0.1.0"
+    owner: "playground"
+    classification: "confidential"
+    derived_from:
+      - "playground-scenario"
+      - "search-request"
+      - "search-response"
+    fields:
+      scenarioId: "chosen scenario"
+      outcome: "rendered and raw result or error"
+      timings: "local observable measurements"
+      reproduction: "sanitized local-only inputs"
+requirements:
+  - id: "R-01"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-01"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Accept structured records with stable external IDs, canonical public URL, searchable fields, stored display fields, locale and optional metadata. Reject conflicting IDs and invalid required fields."
+    criteria:
+      - id: "A-01"
+        text: "Valid records preserve stable external IDs, canonical URLs and stored values; duplicate IDs and absent required URLs reject with typed validation errors."
+  - id: "R-02"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-01"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Accept rendered HTML exports, respecting explicit no-index flags, selected searchable regions and excluded boilerplate. Provide document-level metadata and optional anchored sections without duplicate identities."
+    criteria:
+      - id: "A-02"
+        text: "HTML title/body selection, noindex, excluded navigation and section anchors produce the agreed public records; ignored text is not searchable."
+  - id: "R-03"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-01"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support configured field inclusion, field weights, display-only fields, facets, document boosts and editorial promotion rules. Record defaults and validation errors."
+    criteria:
+      - id: "A-03"
+        text: "Two otherwise identical documents differ predictably when title or editorial weighting is changed; invalid boosts/field config are diagnosed."
+  - id: "R-04"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-02"
+    kind: "functional"
+    category: "serialization"
+    mandatory: true
+    statement: "Produce a deterministic, immutable, versioned static dataset with a manifest/release descriptor; safely publish it as a coherent generation."
+    criteria:
+      - id: "A-04"
+        text: "Rebuilding an identical fixture/config yields equivalent content and deterministic build identity; publishing B while A is active never mixes A and B."
+  - id: "R-05"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-02"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Browser consumers use ordinary static HTTP GET to load only public artifacts. No requirement for a query-time backend."
+    criteria:
+      - id: "A-05"
+        text: "Browser searches fixture corpus through local static GET only; there are no outbound query POST/GET calls with raw text to an application search service."
+  - id: "R-06"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-02"
+    kind: "non-functional"
+    category: "resilience"
+    mandatory: true
+    statement: "Reject unsupported dataset versions, malformed payloads, unsafe resource references and incomplete generations before returning misleading results."
+    criteria:
+      - id: "A-06"
+        text: "Wrong format, broken reference, corrupted body, unsafe relative path and missing generation fail with typed errors and no partial hit set."
+  - id: "R-07"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P2"
+    target: "C-02"
+    kind: "functional"
+    category: "functional"
+    mandatory: false
+    statement: "Allow incremental build-time updates without changing query-time immutability; not required for initial replacement."
+    criteria:
+      - id: "A-34"
+        text: "Rebuild an edited dataset incrementally and compare observable results against a full rebuild; no visitor-side write path is introduced."
+  - id: "R-08"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Search across selected text fields with normalized case and accent behavior defined per language; return only documents that match the chosen query semantics."
+    criteria:
+      - id: "A-07"
+        text: "Case/normalization examples match intended tokens without matching unrelated documents; fields excluded from search do not contribute."
+  - id: "R-09"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-03"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support configurable AND and OR combination of analyzed terms, quoted ordered phrases and explicit prefix matching; handle invalid/empty input predictably."
+    criteria:
+      - id: "A-08"
+        text: "Two-term AND and OR results differ as specified; ordered quoted phrases only match ordered contiguous terms; prefix matches expanded words; malformed/empty syntax has explicit behavior."
+  - id: "R-10"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Rank organic matches by topical relevance; field boosts, term/document importance and deterministic tie-breaks must have documented observable precedence. No fixed BM25F score or algorithm is mandated."
+    criteria:
+      - id: "A-09"
+        text: "When all else is equal, a title match outranks body-only match, a direct exact match outranks fuzzy expansion, and equal-ranked documents have stable deterministic order."
+  - id: "R-10a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support configurable field, term and document boosts with explicit build-time defaults and query-time overrides; validate numeric bounds and define precedence among boosts, relevance, pins and result sorting."
+    criteria:
+      - id: "A-10a"
+        text: "Against controlled equal-content fixtures, changing field, term and document boosts independently changes the intended organic ranking; query overrides take precedence as specified, invalid/NaN/infinite/negative weights reject, and sorting/pins obey documented precedence."
+    refines:
+      - "R-10"
+  - id: "R-11"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Offer opt-in, bounded typo tolerance. Exact matches must not be unpredictably displaced by approximate matches."
+    criteria:
+      - id: "A-10"
+        text: "One-edit misspelling finds the approved candidate when enabled; disabled tolerance does not; expansion limits prevent candidate explosion."
+  - id: "R-12"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-03"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Offer authored equivalent, directional and multiword synonyms with language scoping, cycle/expansion limits and predictable precedence."
+    criteria:
+      - id: "A-11"
+        text: "Equivalent synonym works bidirectionally, directional synonym works only one direction, multiword expansion has the specified matching constraints; cyclic graphs terminate."
+  - id: "R-13"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support editorial promotion/pinning including deterministic conflicts, deduplication and explicit interaction with filters and organic ranking."
+    criteria:
+      - id: "A-12"
+        text: "Exact/contains promotion conflict resolves by explicit priority, duplicates are collapsed, and a selected filter cannot surface a disallowed pinned hit."
+  - id: "R-13a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-04"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support query-scoped editorial pins in exact and contains modes, explicit priorities, optional exclusive mode, deterministic conflicts and deduplication; apply all active filters before returning any pinned document."
+    criteria:
+      - id: "A-13a"
+        text: "In exact/contains, priority-tie, exclusive and duplicate-pin cases, returned IDs/order are deterministic; pins excluded by facet, range, exact-value or geo filters never appear, including when exclusive mode is active."
+    refines:
+      - "R-13"
+  - id: "R-14"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-06"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Return stable total counts, bounded result pages, relevance ordering and declared metadata. Support offset/page-size and sort by approved scalar fields."
+    criteria:
+      - id: "A-13"
+        text: "Results are paginated without duplicates/omissions, total is invariant across pages, scalar sort is consistent and ties are stable; invalid page bounds reject."
+  - id: "R-15"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-06"
+    kind: "non-functional"
+    category: "security"
+    mandatory: true
+    statement: "Produce display-safe excerpts and match span metadata for literal terms; callers own HTML escaping and rendering. Never emit trusted executable markup."
+    criteria:
+      - id: "A-14"
+        text: "Highlights are valid character-span ranges for matching visible text; escaped HTML or script-like strings remain inert when rendered by reference UI."
+  - id: "R-16"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-07"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Return bounded spelling suggestions for no-result or approximate queries, and prefix-based autocomplete candidates where there is supporting corpus evidence."
+    criteria:
+      - id: "A-15"
+        text: "No-result typo yields bounded corpus-grounded suggestion; partial term suggests known continuations; no unsupported candidate is fabricated."
+  - id: "R-17"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P2"
+    target: "C-03"
+    kind: "functional"
+    category: "semantic"
+    mandatory: false
+    statement: "Support cross-field proximity/slop search or advanced boolean query syntax beyond the specified simple query grammar."
+    criteria:
+      - id: "A-35"
+        text: "Configured proximity/slop and advanced boolean rules match independently authored query fixtures, with invalid syntax rejected predictably."
+  - id: "R-18"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-05"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Support term/exact-value filtering (OR within one field, AND across fields); reject or clearly report unknown filters rather than silently broadening results."
+    criteria:
+      - id: "A-16"
+        text: "Multiple values within one terms field are OR; different fields are AND; an unknown field returns a declared error rather than silently removing that restriction."
+  - id: "R-19"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-05"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Support inclusive numeric range filtering, hierarchical taxonomies, and geo-radius filtering when declared in the dataset."
+    criteria:
+      - id: "A-17"
+        text: "Numeric min/max are inclusive; parent/child taxonomy filters apply consistently; geo radius includes inside/boundary and excludes outside points."
+  - id: "R-19a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-05"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support geospatial search using valid WGS84 latitude/longitude, radius-based inclusion and distance sorting with an explicit unit; provide distance on returned hits when unambiguous, deterministic ties and rejection of invalid coordinates/radii."
+    criteria:
+      - id: "A-19a"
+        text: "WGS84 test points inside/on/outside a radius are included consistently; distance sort is nearest-first in declared units with stable ties; invalid lat/lon/radius reject, and distance is supplied only when its origin is unambiguous."
+    refines:
+      - "R-19"
+  - id: "R-20"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-05"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Return contextual facet counts: each facet's counts reflect the query and all other active filters, excluding that facet's own active selection."
+    criteria:
+      - id: "A-18"
+        text: "Contextual facet counts exclude current facet selection while respecting other active filters; counts update as selections change."
+  - id: "R-21"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-06"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Preserve navigable, validated public URLs and optional section anchors, with enough metadata to group section hits by parent document."
+    criteria:
+      - id: "A-19"
+        text: "Canonical public URLs and encoded section anchors navigate to the corresponding content; section identity cannot collide with parent ID."
+  - id: "R-22"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P2"
+    target: "C-06"
+    kind: "functional"
+    category: "functional"
+    mandatory: false
+    statement: "Support group-by/collapse across matched sections and distinct-result grouping if consumers require it."
+    criteria:
+      - id: "A-36"
+        text: "Collapse section hits by parent document without duplicate group counts, and paginate deterministic group results."
+  - id: "R-23"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support at least English, German, Swedish, Dutch, Norwegian Bokmål and Nynorsk; permit explicit language selection and deterministic fallback for unsupported/unknown locales."
+    criteria:
+      - id: "A-20"
+        text: "For each declared required language, exact and inflected queries retrieve the expected document; unsupported locale follows explicit fallback or throws."
+  - id: "R-23a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support language-specific stemming for each required language with documented profiles, configurable enable/disable, and identical indexing/query analysis for each profile. Do not silently substitute one language profile for another."
+    criteria:
+      - id: "A-23a"
+        text: "For each en/de/sv/nl/nb/nn profile, verify independent inflection pairs with stemming on/off; index-time and query-time transformations agree and nb/nn remain separate selected profiles despite shared algorithm possibilities."
+    refines:
+      - "R-23"
+  - id: "R-23b"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "semantic"
+    mandatory: true
+    statement: "Support language-specific stopword filtering with enable/disable, configurable language-default lists and custom additions/removals. Persist the effective analyzer policy with the dataset; consistent indexing/query behavior is mandatory, including all-stopword queries."
+    criteria:
+      - id: "A-23b"
+        text: "For each required language, enabling a default stopword list removes configured tokens consistently during build/query, disabling it preserves them, and custom add/remove takes effect after rebuild; an all-stopword query has explicit predictable non-match behavior and never becomes a match-all."
+    refines:
+      - "R-23"
+  - id: "R-24"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-08"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Keep index-time and query-time analysis compatible for every supported language. Search must not silently mix incompatible language partitions."
+    criteria:
+      - id: "A-21"
+        text: "Query analyzer and publisher agree per locale; ambiguous languages and mixed-language corpora do not silently cross partitions."
+  - id: "R-25"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "non-functional"
+    category: "resilience"
+    mandatory: true
+    statement: "Provide an explicit ready/failed/disposed lifecycle and typed failures for download, decode, incompatible version, invalid config and query cancellation."
+    criteria:
+      - id: "A-22"
+        text: "Failed initialization, broken downloads and query after dispose each return distinct typed failures; no failure is reinterpreted as zero hits."
+  - id: "R-26"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "functional"
+    category: "concurrency"
+    mandatory: true
+    statement: "Concurrent queries against one client produce isolated, deterministic results and do not corrupt shared state."
+    criteria:
+      - id: "A-23"
+        text: "Multiple overlapping wide/narrow searches on one instance equal the results of sequential calls, including facet and locale isolation."
+  - id: "R-27"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "functional"
+    category: "concurrency"
+    mandatory: true
+    statement: "Query cancellation stops delivering stale caller results; disposal prevents further use. Shared reads may continue if needed by other callers."
+    criteria:
+      - id: "A-24"
+        text: "Abort rejects only the caller; no stale results are delivered; disposing while loading blocks all later calls and repeated dispose is safe."
+  - id: "R-28"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "non-functional"
+    category: "scalability"
+    mandatory: true
+    statement: "Support bounded memory and download consumption, controlled concurrency, and effective ordinary HTTP caching. Optional search capabilities should not impose unavoidable excessive initial cost."
+    criteria:
+      - id: "A-25"
+        text: "Oversized query/expansion/configured resource limits produce bounded work and a documented error or degraded mode, not OOM/hang."
+  - id: "R-29"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P2"
+    target: "C-09"
+    kind: "non-functional"
+    category: "resilience"
+    mandatory: false
+    statement: "Fully offline operation after initial install and persistent on-device indexes require their own approval; ordinary cached HTTP is sufficient for MVP."
+    criteria:
+      - id: "A-37"
+        text: "After a completed local install, disconnect the network and verify approved search operations while detecting absent/stale assets explicitly."
+  - id: "R-30"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-02"
+    kind: "non-functional"
+    category: "security"
+    mandatory: true
+    statement: "Disallow private or access-controlled content in publicly published artifacts. Validate canonical URLs and block unsafe URL schemes, path traversal and unapproved cross-origin artifact fetching."
+    criteria:
+      - id: "A-26"
+        text: "Index publication rejects designated private fields; unsafe canonical schemes, traversal, and unapproved artifact origins are denied."
+  - id: "R-31"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "non-functional"
+    category: "security"
+    mandatory: true
+    statement: "Never upload raw search terms, searches or result clicks by default. Explain that hosting access logs and query-derived artifact URLs can still expose access patterns."
+    criteria:
+      - id: "A-27"
+        text: "Browser network audit shows no remote query/telemetry submission by default; product guidance accurately describes artifact-request leakage."
+  - id: "R-32"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-09"
+    kind: "non-functional"
+    category: "security"
+    mandatory: true
+    statement: "Untrusted strings, filter keys, metadata and display fields are handled as data without prototype pollution, code execution, DOM injection or uncontrolled crashes."
+    criteria:
+      - id: "A-28"
+        text: "Malicious field names (including prototype keys), markup, control chars, encoded paths and hostile metadata do not execute code or mutate prototypes."
+  - id: "R-33"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-10"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Expose a headless UI integration contract for input, submit/change, busy, results, zero-results, error, filters, paging, suggestions and navigation; do not require React or another framework."
+    criteria:
+      - id: "A-29"
+        text: "A framework-neutral adapter can drive search, busy, error, empty, facets, paging, suggestions and navigation without reaching into engine internals."
+  - id: "R-34"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-10"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Reference interaction patterns satisfy keyboard navigation, appropriate status announcements, focus management and WCAG 2.2 AA when rendered by a conforming integrator. The headless engine does not itself claim UI accessibility."
+    criteria:
+      - id: "A-30"
+        text: "Reference integration: keyboard-only interaction and screen-reader status/focus flows pass WCAG 2.2 AA evaluation; headless API makes no unsupported accessibility claims."
+  - id: "R-35"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "orama-client-search"
+    kind: "non-functional"
+    category: "performance"
+    mandatory: true
+    statement: "Measure cold/warm search latency, transfer bytes, parse/index-load time, peak heap, bundle impact and relevance on representative real browsers, languages, corpora and devices. Agree acceptance budgets before implementation."
+    criteria:
+      - id: "A-31"
+        text: "Cold/warm timings, index transfer bytes, parse/load, memory, bundle, cache behavior and device/browser matrix are reproducible and reviewed against approved budgets."
+  - id: "R-36"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "orama-client-search"
+    kind: "non-functional"
+    category: "performance"
+    mandatory: true
+    statement: "Verify relevance through maintained, reviewed query judgments and ranking metrics (e.g. nDCG@5, MRR, zero-result rate) plus per-query regression analysis, not by copying existing engine numeric scores."
+    criteria:
+      - id: "A-32"
+        text: "Independently reviewed query judgments produce MRR, nDCG@5, recall/precision and zero-result rate; regression report identifies per-query degradations."
+  - id: "R-37"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-02"
+    kind: "functional"
+    category: "serialization"
+    mandatory: true
+    statement: "Version the public headless API and dataset format independently; provide migration/rollback guidance for intentional breaking changes."
+    criteria:
+      - id: "A-33"
+        text: "Publisher/client version compatibility matrix tests supported combination, rejected future/old versions and rollback from B to A."
+  - id: "R-38"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P2"
+    target: "C-09"
+    kind: "non-functional"
+    category: "observability"
+    mandatory: false
+    statement: "Optional telemetry integration may expose events/hooks controlled by integrators; the library must not activate remote analytics by default."
+    criteria:
+      - id: "A-38"
+        text: "Opt-in local telemetry hook reports allowed events, and the default configuration emits no network analytics or raw query records."
+  - id: "R-39"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "orama-client-search"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Provide a statically hosted interactive playground that can exercise **every adopted capability and requirement** using deterministic reference data, interactive controls and inspectable results. Coverage must be traceable to requirements, and unsupported/deferred behavior must be labeled."
+    criteria:
+      - id: "A-39"
+        text: "For each approved feature in the requirement matrix, a user can open a scenario, change parameters, run it, inspect results and see the feature's requirement/acceptance IDs; disabled/deferred features are explicitly labeled."
+  - id: "R-39a"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-11"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Provide editable sample documents, field configurations, locale choices and preset datasets; safely rebuild or reload an isolated local test dataset without affecting production content or remote services."
+    criteria:
+      - id: "A-39a"
+        text: "Edit fixture records and field configuration, rebuild/reload a sandbox dataset, verify that queries reflect edits, restore defaults, and verify there are no network writes to production."
+    refines:
+      - "R-39"
+  - id: "R-39b"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-11"
+    kind: "functional"
+    category: "contract"
+    mandatory: true
+    statement: "Provide controls for query grammar, ranking, fuzzy tolerance, synonyms, pins, filters, facets, geo, sorting, pagination, suggestion, highlights and lifecycle/failure cases; show both rendered and structured results."
+    criteria:
+      - id: "A-39b"
+        text: "Exercise syntax, typo tolerance, synonyms, pins, facets, filters, geo, sort/pagination, excerpts, suggestions and lifecycle failures using controls; rendered hits agree with raw structured output."
+    refines:
+      - "R-39"
+  - id: "R-39c"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-11"
+    kind: "functional"
+    category: "functional"
+    mandatory: true
+    statement: "Provide requirement-linked examples, positive/negative/boundary cases, deterministic reset, visibility of active dataset build/configuration, and copyable diagnostic repro steps without leaking user queries off-device."
+    criteria:
+      - id: "A-39c"
+        text: "Every implemented requirement has a linked playable scenario and documented expected outcome including failure/boundary modes; reset/replay gives deterministic results, and copied repro includes safe inputs/configuration."
+    refines:
+      - "R-39"
+  - id: "R-39d"
+    version: "0.1.0"
+    status: "specified"
+    proposed: true
+    priority: "P0"
+    target: "C-11"
+    kind: "non-functional"
+    category: "security"
+    mandatory: true
+    statement: "Make the playground keyboard and mobile accessible; keep example state local by default, show measurable query/load timings and explicit errors, and never expose private corpus records."
+    criteria:
+      - id: "A-39d"
+        text: "Verify keyboard-only and screen-reader workflows, small viewport layout, local-only query/data handling, bounded input and visible timing/errors; intentionally unsafe content remains inert."
+    refines:
+      - "R-39"
+risks:
+  - id: "K-01"
+    target: "C-02"
+    description: "Public dataset may disclose non-public values"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-30"
+  - id: "K-02"
+    target: "C-09"
+    description: "In-memory index may exceed startup/memory budgets"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-28"
+      - "R-35"
+  - id: "K-03"
+    target: "C-04"
+    description: "Ranking divergence may degrade judged relevance"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-10"
+      - "R-36"
+  - id: "K-04"
+    target: "C-03"
+    description: "Phrase/synonym/pin composition may be incorrect"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-09"
+      - "R-12"
+      - "R-13"
+  - id: "K-05"
+    target: "C-02"
+    description: "Incomplete static release may mix generations"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-04"
+      - "R-06"
+  - id: "K-06"
+    target: "C-09"
+    description: "Artifact URLs and logs may leak access patterns"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-31"
+  - id: "K-07"
+    target: "C-08"
+    description: "Locale fallback may silently reduce recall"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-23"
+      - "R-24"
+  - id: "K-08"
+    target: "C-02"
+    description: "Persisted search snapshot may become incompatible"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-06"
+      - "R-37"
+  - id: "K-09"
+    target: "C-06"
+    description: "Unsafe snippets may execute embedded content"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-15"
+      - "R-32"
+  - id: "K-10"
+    target: "C-11"
+    description: "Playground could fake success or expose private data"
+    treatment: "mitigation"
+    mitigated_by:
+      - "R-39"
+      - "R-39c"
+      - "R-39d"
+evidence: []
+
+views:
+  - id: "playground-feature-catalog"
+    purpose: "Discover all approved search features, examples and requirement coverage"
+    content:
+      - "Feature list with R/A/PG identifiers and implementation status"
+      - "Fixture and capability descriptions"
+    actions: ["select-feature"]
+    states:
+      ready: "Show feature catalogue and the selected requirement mapping"
+  - id: "playground-workbench"
+    purpose: "Configure public fixtures and run interactive searches"
+    content:
+      - "Corpus and field editor"
+      - "Search, language/stemmer/stopword, geo, pin, facet, sort and boost controls"
+      - "Current dataset identity and warnings"
+    actions: ["edit-record", "run-query", "inspect-output", "reset"]
+    states:
+      ready: "Show editable fixture and controls"
+      loading: "Show cancellable progress while rebuilding the isolated dataset"
+  - id: "playground-inspector"
+    purpose: "Inspect structured outcomes, safe highlights, errors and diagnostics"
+    content:
+      - "Rendered hits, raw results, contextual facets and timing"
+      - "Reproduction state and visible typed errors"
+    actions: ["back", "replay"]
+    states:
+      results: "Display ranked results and raw structured response"
+      empty: "Explain no matching documents and show available suggestions"
+      error: "Show typed error and recoverable action without fabricated results"
+experiences:
+  - id: "playground-feature-verification"
+    description: "A user selects, exercises and inspects every approved search capability using public editable fixtures"
+    critical: true
+    exhaustive: true
+    requirements: ["R-39", "R-39a", "R-39b", "R-39c", "R-39d", "R-10a", "R-13a", "R-19a", "R-23a", "R-23b"]
+    capabilities: ["C-11"]
+    views: ["playground-feature-catalog", "playground-workbench", "playground-inspector"]
+    constraints:
+      public_only: "Sample records and fixtures must contain no non-public data"
+      framework_independence: "Playground uses the public headless engine interface"
+      no_query_upload: "No raw query text or edited corpus transmitted to a query API"
+    interactions:
+      - id: "choose-feature"
+        from_view: "playground-feature-catalog"
+        to_view: "playground-workbench"
+        trigger: "select-feature"
+        outcome: "A matching fixture and configured feature controls appear"
+      - id: "edit-fixture"
+        from_view: "playground-workbench"
+        to_view: "playground-workbench"
+        trigger: "edit-record"
+        outcome: "A local isolated fixture is rebuilt or reloaded and controls remain responsive"
+      - id: "run-query"
+        from_view: "playground-workbench"
+        to_view: "playground-inspector"
+        trigger: "run-query"
+        outcome: "Completed local query produces structured results or a typed failure"
+        failure_modes:
+          invalid_input: "error"
+      - id: "inspect-output"
+        from_view: "playground-workbench"
+        to_view: "playground-inspector"
+        trigger: "inspect-output"
+        outcome: "The active scenario displays its raw and rendered outcome"
+      - id: "reset-fixture"
+        from_view: "playground-workbench"
+        to_view: "playground-workbench"
+        trigger: "reset"
+        outcome: "Fixture and controls return to repeatable initial state"
+      - id: "back-to-workbench"
+        from_view: "playground-inspector"
+        to_view: "playground-workbench"
+        trigger: "back"
+        outcome: "Previous configuration remains visible and editable"
+      - id: "replay-scenario"
+        from_view: "playground-inspector"
+        to_view: "playground-inspector"
+        trigger: "replay"
+        outcome: "The same scenario returns reproducible observable results"
+    scenarios:
+      - id: "PG-model-catalog"
+        requirement: "R-39"
+        interactions: ["choose-feature"]
+        states: ["playground-feature-catalog.ready", "playground-workbench.ready"]
+      - id: "PG-model-edit"
+        requirement: "R-39a"
+        interactions: ["edit-fixture"]
+        states: ["playground-workbench.loading", "playground-workbench.ready"]
+      - id: "PG-model-search"
+        requirement: "R-39b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-zero-results"
+        requirement: "R-39b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.empty"]
+      - id: "PG-model-error"
+        requirement: "R-39d"
+        interactions: ["run-query"]
+        states: ["playground-inspector.error"]
+        kind: "negative"
+      - id: "PG-model-inspect"
+        requirement: "R-39b"
+        interactions: ["inspect-output"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-reset"
+        requirement: "R-39c"
+        interactions: ["reset-fixture"]
+        states: ["playground-workbench.ready"]
+      - id: "PG-model-back"
+        requirement: "R-39c"
+        interactions: ["back-to-workbench"]
+        states: ["playground-workbench.ready"]
+      - id: "PG-model-boosts"
+        requirement: "R-10a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-pins"
+        requirement: "R-13a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-geo"
+        requirement: "R-19a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-stemming"
+        requirement: "R-23a"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-stopwords"
+        requirement: "R-23b"
+        interactions: ["run-query"]
+        states: ["playground-inspector.results"]
+      - id: "PG-model-replay"
+        requirement: "R-39c"
+        interactions: ["replay-scenario"]
+        states: ["playground-inspector.results"]
