@@ -23,7 +23,7 @@
 | --- | --- | --- |
 | D-01 Product boundary | Public data, static HTTP deployment, local/browser lexical search, no hosted query API | Pending |
 | D-02 Compatibility | Independent headless API and dataset format; no predecessor API/manifest compatibility | Pending |
-| D-03 Search semantics | R-08–R-24, including phrases, synonyms, pins, contextual facets and explicit locale behavior | Pending |
+| D-03 Search semantics | R-08–R-24 plus R-10a/R-13a/R-19a/R-23a/R-23b: explicit boosts, pin modes, geo distance, language-specific stemming and configurable stopwords | Pending |
 | D-04 Feature scope | R-01–R-06, R-08–R-16, R-18–R-21, R-23–R-28, R-30–R-37 and R-39–R-39d are MVP; R-07, R-17, R-22, R-29, R-38 are extensions | Pending |
 | D-05 Playground | Static, interactive, editable public fixtures; **all adopted requirements** traceable to scenarios; React/TypeScript implementation candidate | Pending |
 | D-06 Performance | 2k/10k/50k corpus benchmarks, representative devices/browsers; agree p95/bytes/heap/long-task budgets using measured spike | Pending |
